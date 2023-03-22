@@ -11,38 +11,22 @@ Created on Mon Aug  8 12:10:09 2022
 #Please put in what you want here
 
 angleInc = float(input('Please enter your angle increment e.g 5: ')) #your angle increment e.g 5 degrees 
-dir_path = str(input('Please enter the directory of your record loop images. E.g E:\\Xingjian Hou\\SavingImgTest\\test: '))
+dir_path = str(input('Please enter the directory of your record loop images: '))
 number_frames = int(input('Please enter the number of frames per rotation e.g 19, 18, 17: '))
 
 #-------------------------------------------------------------------#
 
 
-import time
 import os 
-from os import scandir, rename
+from os import rename
 from os.path import splitext, exists, join
 from shutil import move
-from itomUi import ItomUi
-import logging
-
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 import os.path
 
 
-# ? supported image types
 image_extensions = [".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".png", ".gif", ".webp", ".tiff", ".tif", ".psd", ".raw", ".arw", ".cr2", ".nrw",
                     ".k25", ".bmp", ".dib", ".heif", ".heic", ".ind", ".indd", ".indt", ".jp2", ".j2k", ".jpf", ".jpf", ".jpx", ".jpm", ".mj2", ".svg", ".svgz", ".ai", ".eps", ".ico"]
-# ? supported Video types
-video_extensions = [".webm", ".mpg", ".mp2", ".mpeg", ".mpe", ".mpv", ".ogg",
-                    ".mp4", ".mp4v", ".m4v", ".avi", ".wmv", ".mov", ".qt", ".flv", ".swf", ".avchd"]
-# ? supported Audio types
-audio_extensions = [".m4a", ".flac", "mp3", ".wav", ".wma", ".aac"]
-# ? supported Document types
-document_extensions = [".doc", ".docx", ".odt",
-                       ".pdf", ".xls", ".xlsx", ".ppt", ".pptx"]
 
-  #---------------------------
 
   
 
@@ -69,6 +53,7 @@ def move_file(dest, entry, name):
 
 count = 0
 total =0
+
 # Iterate directory
 for path in os.listdir(dir_path):
     # check if current path is a file
@@ -76,9 +61,23 @@ for path in os.listdir(dir_path):
         total += 1
 print('Total number of frames:', total)
 
+
+#renaming the first 9 frames if total < 1000 
+
+if total < 1000: 
+    for i in range(1,10):
+        old_name = dir_path + '//' + '00' + str(i) + '.tif'
+        new_name = dir_path + '//' + '0' + str(i) + '.tif'
+        rename(old_name, new_name)
+else:
+    pass
+
+
 j=1
+
 while number_frames*j <= total:
     for path in os.listdir(dir_path):
+        
          if os.path.isfile(os.path.join(dir_path, path)):
              count +=1
              
@@ -87,6 +86,7 @@ while number_frames*j <= total:
                  newpath = dir_path+str(j*angleInc)
                  os.makedirs(newpath)
                  j=j+1
+                 
                  for i in range(number_frames):
                      new_count = count-i
                      if os.path.exists(dir_path+'//'+str(new_count)+'.tif')==True:
